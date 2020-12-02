@@ -2,6 +2,7 @@ package com.example.calendarquickstart;
 
 import android.Manifest;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -40,6 +42,8 @@ import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+
+//import com.google.api.services.calendar.Calendar;
 
 public class MainActivity extends Activity implements EasyPermissions.PermissionCallbacks {
 
@@ -141,7 +145,9 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
             mOutputText.setText("No network connection available.");
         }
         else {
-            new MakeRequestTask(mCredential).execute();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+                new MakeRequestTask(mCredential).execute();
+            }
         }
     }
 
@@ -258,7 +264,9 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
                         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.apply();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                            editor.apply();
+                        }
                         mCredential.setSelectedAccountName(accountName);
                         getResultsFromApi();
                     }
@@ -329,6 +337,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
     /**
      * 非同期で　Google Calendar API の呼び出しを行うクラス。
      */
+    @SuppressLint("NewApi")
     private class MakeRequestTask extends AsyncTask<Void, Void, String> {
 
         private com.google.api.services.calendar.Calendar mService = null;
@@ -348,13 +357,16 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
          *
          * @param params 引数は不要
          */
+
         @Override
         protected String doInBackground(Void... params) {
             try {
                 return createCalendar();
             } catch (Exception e) {
                 mLastError = e;
-                cancel(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+                    cancel(true);
+                }
                 return null;
             }
         }
@@ -404,10 +416,12 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
         @Override
         protected void onPostExecute(String output) {
             mProgress.hide();
-            if (output == null || output.isEmpty()) {
-                mOutputText.setText("No results returned.");
-            } else {
-                mOutputText.setText("Calendar created using the Google Calendar API: " + output);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                if (output == null || output.isEmpty()) {
+                    mOutputText.setText("No results returned.");
+                } else {
+                    mOutputText.setText("Calendar created using the Google Calendar API: " + output);
+                }
             }
         }
 
