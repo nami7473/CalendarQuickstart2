@@ -381,7 +381,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
             // 新規にカレンダーを作成する
             com.google.api.services.calendar.model.Calendar calendar = new Calendar();
             // カレンダーにタイトルを設定する
-            calendar.setSummary("CalendarTitle");
+            calendar.setSummary("TestCalendar");
             // カレンダーにタイムゾーンを設定する
             calendar.setTimeZone("Asia/Tokyo");
 
