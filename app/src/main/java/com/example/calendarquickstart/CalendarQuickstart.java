@@ -1,6 +1,5 @@
 package com.example.calendarquickstart;
 
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -31,8 +30,8 @@ public class CalendarQuickstart {
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
     /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved tokens/ folder.
+     * このクイックスタートに必要なスコープのグローバルインスタンス。
+     * これらのスコープを変更する場合は、以前に保存したtokens/フォルダーを削除してください。
      */
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
@@ -44,14 +43,14 @@ public class CalendarQuickstart {
      * @throws IOException If the credentials.json file cannot be found.
      */
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        // Load client secrets.
+        //クライアントシークレットをロードする.
         InputStream in = CalendarQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-        // Build flow and trigger user authorization request.
+        // フローを構築し、ユーザー認証リクエストをトリガーします。
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
@@ -62,15 +61,15 @@ public class CalendarQuickstart {
     }
 
     public static void main(String... args) throws IOException, GeneralSecurityException {
-        // Build a new authorized API client service.
+        //新しい承認済みAPIクライアントサービスを構築します。
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        Calendar mService = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        // List the next 10 events from the primary calendar.
+        // primaryカレンダーから次の10個のイベントを一覧表示します。
         DateTime now = new DateTime(System.currentTimeMillis());
-        Events events = service.events().list("primary")
+        Events events = mService.events().list("primary")
                 .setMaxResults(10)
                 .setTimeMin(now)
                 .setOrderBy("startTime")
@@ -78,9 +77,9 @@ public class CalendarQuickstart {
                 .execute();
         List<Event> items = events.getItems();
         if (items.isEmpty()) {
-            System.out.println("No upcoming events found.");
+            System.out.println("予定なし");
         } else {
-            System.out.println("Upcoming events");
+            System.out.println("予定あり");
             for (Event event : items) {
                 DateTime start = event.getStart().getDateTime();
                 if (start == null) {

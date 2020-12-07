@@ -108,7 +108,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
 
         // Google Calendar API の呼び出し中を表す PrgressDialog を準備する
         mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Calling Google Calendar API ...");
+        mProgress.setMessage("Google CalendarAPIを呼び出し中");
 
         // ActivityにViewを設定する
         setContentView(activityLayout);
@@ -379,7 +379,7 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
          */
         private String createCalendar() throws IOException {
             // 新規にカレンダーを作成する
-            com.google.api.services.calendar.model.Calendar calendar = new Calendar();
+            Calendar calendar = new Calendar();
             // カレンダーにタイトルを設定する
             calendar.setSummary("TestCalendar");
             // カレンダーにタイムゾーンを設定する
@@ -391,15 +391,15 @@ public class MainActivity extends Activity implements EasyPermissions.Permission
             String calendarId = createdCalendar.getId();
 
             // カレンダー一覧から新規に作成したカレンダーのエントリを取得する
-            CalendarListEntry calendarListEntry = mService.calendarList().get(calendarId).execute();
+            CalendarListEntry calendarEntryList = mService.calendarList().get(calendarId).execute();
 
             // カレンダーのデフォルトの背景色を設定する
-            calendarListEntry.setBackgroundColor("#ff0000");
+            calendarEntryList.setBackgroundColor("#ff0000");
 
             // カレンダーのデフォルトの背景色をGoogleカレンダーに反映させる
             CalendarListEntry updatedCalendarListEntry =
                     mService.calendarList()
-                            .update(calendarListEntry.getId(), calendarListEntry)
+                            .update(calendarEntryList.getId(), calendarEntryList)
                             .setColorRgbFormat(true)
                             .execute();
 
